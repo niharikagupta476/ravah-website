@@ -21,6 +21,15 @@ npm run dev
 - `npm run start` - start production server
 - `npm run lint` - lint check
 
+## Troubleshooting
+- If you see `sh: 1: next: not found`, dependencies are not installed in the project.
+- Run:
+  ```bash
+  npm install
+  npm run dev
+  ```
+- The project includes a startup dependency check (`scripts/ensure-next.js`) that now gives a clear actionable error before running dev/build/start.
+
 ## Analytics
 Analytics are provider-agnostic via env flags:
 

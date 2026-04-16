@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
+    "predev": "node scripts/ensure-next.js",
+    "prebuild": "node scripts/ensure-next.js",
+    "prestart": "node scripts/ensure-next.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
