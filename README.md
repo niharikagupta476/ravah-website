@@ -6,6 +6,7 @@ Premium, performance-focused marketing site for Ravah.ai. Built with Next.js App
 - Next.js 14 (App Router)
 - React 18
 - TypeScript
+- Tailwind CSS
 - MDX for blog content
 
 ## Getting Started
