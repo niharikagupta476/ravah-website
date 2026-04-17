@@ -46,10 +46,14 @@ Tracked events:
 - `pricing_view`
 - `form_submit_demo`
 - `newsletter_subscribe`
+- `score_started`
+- `score_completed`
+- `score_cta_click`
 
 ## APIs
 - `POST /api/contact` validates and processes demo/contact submissions and sends email via Resend.
-- `POST /api/score` calculates a Ravah maturity score for the score page.
+- `POST /api/score` calculates a Ravah maturity score, persists it, and returns a shareable result link.
+- `POST /api/lead` captures score leads (email + score context) and sends full report emails.
 
 Required contact email env vars:
 

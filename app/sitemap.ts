@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/use-cases",
     "/pricing",
     "/score",
+    "/score/result",
     "/docs",
     "/security",
     "/integrations",

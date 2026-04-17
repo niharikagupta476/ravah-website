@@ -33,7 +33,8 @@ export default function PricingPage() {
           title="Need a tailored security review?"
           description="We can share a data handling overview and compliance roadmap."
           primary={{ href: "/contact", label: "Talk to sales" }}
-          secondary={{ href: "/security", label: "Review security" }}
+          secondary={{ href: "/score", label: "Try Ravah Score" }}
+          secondaryEvent="score_cta_click"
         />
       </Section>
       <StickyCTA label="Talk to sales" />

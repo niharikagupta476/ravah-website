@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { TrackedLink } from "./TrackedLink";
+import type { AnalyticsEvent } from "@/lib/analytics";
 
 interface CTAProps {
   title: string;
   description: string;
   primary: { href: string; label: string };
   secondary?: { href: string; label: string };
-  primaryEvent?: "cta_demo_click" | "cta_docs_click";
-  secondaryEvent?: "cta_demo_click" | "cta_docs_click";
+  primaryEvent?: AnalyticsEvent;
+  secondaryEvent?: AnalyticsEvent;
 }
 
 export function CTA({
@@ -26,11 +27,7 @@ export function CTA({
       </div>
       <div className="cta-actions">
         {primaryEvent ? (
-          <TrackedLink
-            className="button button-primary"
-            href={primary.href}
-            event={primaryEvent}
-          >
+          <TrackedLink className="button button-primary" href={primary.href} event={primaryEvent}>
             {primary.label}
           </TrackedLink>
         ) : (
@@ -41,11 +38,7 @@ export function CTA({
         {secondary && (
           <>
             {secondaryEvent ? (
-              <TrackedLink
-                className="button button-ghost"
-                href={secondary.href}
-                event={secondaryEvent}
-              >
+              <TrackedLink className="button button-ghost" href={secondary.href} event={secondaryEvent}>
                 {secondary.label}
               </TrackedLink>
             ) : (

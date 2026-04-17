@@ -16,6 +16,9 @@ export function Navbar() {
           ))}
         </nav>
         <div className="nav-cta">
+          <Link className="button button-primary" href="/score">
+            Try Ravah Score
+          </Link>
           <Link className="button button-ghost" href="/docs">
             View Docs
           </Link>

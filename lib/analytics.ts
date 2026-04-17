@@ -3,7 +3,10 @@ export type AnalyticsEvent =
   | "cta_docs_click"
   | "pricing_view"
   | "form_submit_demo"
-  | "newsletter_subscribe";
+  | "newsletter_subscribe"
+  | "score_started"
+  | "score_completed"
+  | "score_cta_click";
 
 export function trackEvent(
   event: AnalyticsEvent,

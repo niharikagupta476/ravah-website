@@ -80,7 +80,8 @@ export default function ProductPage() {
           title="Schedule a product walkthrough"
           description="Bring your last incident and see a tailored analysis live."
           primary={{ href: "/contact", label: "Request Demo" }}
-          secondary={{ href: "/use-cases", label: "Explore use cases" }}
+          secondary={{ href: "/score", label: "Try Ravah Score" }}
+          secondaryEvent="score_cta_click"
         />
       </Section>
     </>

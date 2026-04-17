@@ -32,6 +32,13 @@ export function HeroSection() {
             >
               Try Ravah Score
             </TrackedLink>
+            <TrackedLink
+              href="/score"
+              event="score_cta_click"
+              className="inline-flex items-center rounded-xl border border-cyan-300/40 bg-cyan-500/10 px-6 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/20"
+            >
+              Measure your DevOps maturity
+            </TrackedLink>
           </div>
         </div>
 
