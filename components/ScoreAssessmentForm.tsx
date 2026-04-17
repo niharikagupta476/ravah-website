@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
+import { ScoreGauge } from "@/components/score/ScoreGauge";
+import { ScoreRadarChart } from "@/components/score/ScoreRadarChart";
 
 type ScoreMetricKey =
   | "delivery"
@@ -65,6 +67,17 @@ export function ScoreAssessmentForm() {
     }
 
     return new URL(result.shareUrl, window.location.origin).toString();
+  }, [result]);
+
+  const radarData = useMemo(() => {
+    if (!result) {
+      return [];
+    }
+
+    return Object.entries(result.breakdown).map(([metric, value]) => ({
+      metric: metricLabels[metric as ScoreMetricKey],
+      value: value.normalized,
+    }));
   }, [result]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -147,25 +160,21 @@ export function ScoreAssessmentForm() {
   };
 
   const handleCopyShareLink = async () => {
-    if (!absoluteShareUrl) {
+    if (!absoluteShareUrl || !navigator?.clipboard?.writeText) {
       return;
     }
 
-    if (navigator?.clipboard?.writeText) {
-      await navigator.clipboard.writeText(absoluteShareUrl);
-      trackEvent("score_cta_click", { cta: "copy_share_link" });
-    }
+    await navigator.clipboard.writeText(absoluteShareUrl);
+    trackEvent("score_cta_click", { cta: "copy_share_link" });
   };
 
   const handleCopyShareText = async () => {
-    if (!result) {
+    if (!result || !navigator?.clipboard?.writeText) {
       return;
     }
 
-    if (navigator?.clipboard?.writeText) {
-      await navigator.clipboard.writeText(result.shareText);
-      trackEvent("score_cta_click", { cta: "copy_share_text" });
-    }
+    await navigator.clipboard.writeText(result.shareText);
+    trackEvent("score_cta_click", { cta: "copy_share_text" });
   };
 
   const linkedInUrl = absoluteShareUrl
@@ -174,101 +183,110 @@ export function ScoreAssessmentForm() {
 
   return (
     <div className="mt-8 grid gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 lg:grid-cols-2">
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="form-row">
+      <form className="form space-y-4" onSubmit={handleSubmit}>
+        <h3 className="text-lg font-semibold text-white">Assessment Inputs</h3>
+        <div className="form-row gap-4">
           <div>
-            <label htmlFor="delivery">Delivery</label>
+            <label className="text-white" htmlFor="delivery">Delivery</label>
             <input id="delivery" name="delivery" type="number" min={0} max={100} defaultValue={60} required />
           </div>
           <div>
-            <label htmlFor="cost">Cost</label>
+            <label className="text-white" htmlFor="cost">Cost</label>
             <input id="cost" name="cost" type="number" min={0} max={100} defaultValue={60} required />
           </div>
         </div>
 
-        <div className="form-row">
+        <div className="form-row gap-4">
           <div>
-            <label htmlFor="architecture">Architecture</label>
+            <label className="text-white" htmlFor="architecture">Architecture</label>
             <input id="architecture" name="architecture" type="number" min={0} max={100} defaultValue={60} required />
           </div>
           <div>
-            <label htmlFor="reliability">Reliability</label>
+            <label className="text-white" htmlFor="reliability">Reliability</label>
             <input id="reliability" name="reliability" type="number" min={0} max={100} defaultValue={60} required />
           </div>
         </div>
 
-        <div className="form-row">
+        <div className="form-row gap-4">
           <div>
-            <label htmlFor="ai">AI</label>
+            <label className="text-white" htmlFor="ai">AI</label>
             <input id="ai" name="ai" type="number" min={0} max={100} defaultValue={60} required />
           </div>
           <div>
-            <label htmlFor="devEx">DevEx</label>
+            <label className="text-white" htmlFor="devEx">DevEx</label>
             <input id="devEx" name="devEx" type="number" min={0} max={100} defaultValue={60} required />
           </div>
         </div>
 
-        <button className="button button-primary" type="submit" disabled={status === "loading"}>
+        <button className="button button-primary px-5 py-3 text-sm" type="submit" disabled={status === "loading"}>
           {status === "loading" ? "Calculating..." : "Calculate Score"}
         </button>
         {status === "error" && (
-          <p className="hero-note" role="alert">
+          <p className="hero-note text-rose-300" role="alert">
             {errorMessage}
           </p>
         )}
       </form>
 
-      <div className="card">
-        <h3>Your Ravah Score</h3>
-        {!result && <p className="hero-note">Submit the wizard to see your score breakdown and actions.</p>}
-        {result && (
-          <div className="stack">
-            <p className="price">{result.score}</p>
-            <p className="hero-note">{result.shareText}</p>
+      <div className="space-y-6 rounded-2xl border border-slate-700 bg-slate-900 p-8 text-white">
+        {!result && (
+          <div className="space-y-3">
+            <h3 className="text-xl font-semibold text-white">Your Ravah Score</h3>
+            <p className="text-slate-300">Submit the left panel to generate a full score report.</p>
+          </div>
+        )}
 
-            <div className="stack">
-              {Object.entries(result.breakdown).map(([metric, value]) => (
-                <p key={metric}>
-                  <strong>{metricLabels[metric as ScoreMetricKey]}:</strong> {value.normalized}/1000
-                </p>
-              ))}
+        {result && (
+          <>
+            <div className="space-y-6">
+              <ScoreGauge score={result.score} />
             </div>
 
-            <div className="stack">
-              <h4>Insights</h4>
+            <div className="space-y-3">
+              <h4 className="text-lg font-semibold text-white">Breakdown</h4>
+              <div className="grid grid-cols-2 gap-4">
+                {Object.entries(result.breakdown).map(([metric, value]) => (
+                  <div key={metric} className="rounded-xl border border-slate-700 bg-slate-800 p-4">
+                    <p className="text-sm text-slate-300">{metricLabels[metric as ScoreMetricKey]}</p>
+                    <p className="text-lg font-semibold text-white">{value.normalized}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="text-lg font-semibold text-white">Metric Shape</h4>
+              <ScoreRadarChart data={radarData} />
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="text-lg font-semibold text-white">Insights</h4>
               {result.insights.length === 0 ? (
-                <p className="hero-note">No critical issues detected.</p>
+                <p className="text-slate-300">No critical issues detected.</p>
               ) : (
-                result.insights.map((insight) => (
-                  <p key={`${insight.metric}-${insight.title}`}>
-                    <strong>{insight.title}:</strong> {insight.detail}
-                  </p>
-                ))
+                <div className="space-y-2">
+                  {result.insights.map((insight) => (
+                    <p key={`${insight.metric}-${insight.title}`} className="text-slate-200">
+                      ⚠️ <span className="font-medium text-white">{insight.title}:</span> {insight.detail}
+                    </p>
+                  ))}
+                </div>
               )}
             </div>
 
-            <div className="stack">
-              <h4>Recommendations</h4>
-              {result.recommendations.map((recommendation) => (
-                <p key={`${recommendation.metric}-${recommendation.priority}`}>
-                  <strong>{recommendation.priority.toUpperCase()}:</strong> {recommendation.action}
-                </p>
-              ))}
-            </div>
-
-            <div className="stack">
-              <h4>Want Ravah to fix this automatically?</h4>
-              <div className="cta-actions">
+            <div className="space-y-3">
+              <h4 className="text-lg font-semibold text-white">Want Ravah to fix this automatically?</h4>
+              <div className="flex flex-wrap gap-3">
                 <Link
                   href="/product"
-                  className="button button-primary"
+                  className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                   onClick={() => trackEvent("score_cta_click", { cta: "start_using_ravah" })}
                 >
                   Start Using Ravah
                 </Link>
                 <Link
                   href="/contact"
-                  className="button button-ghost"
+                  className="rounded-lg border border-slate-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
                   onClick={() => trackEvent("score_cta_click", { cta: "book_demo" })}
                 >
                   Book Demo
@@ -276,24 +294,36 @@ export function ScoreAssessmentForm() {
               </div>
             </div>
 
-            <form className="form" onSubmit={handleCaptureLead}>
-              <label htmlFor="lead-email">Get full report in your inbox</label>
+            <form className="form space-y-3" onSubmit={handleCaptureLead}>
+              <label className="text-white" htmlFor="lead-email">Get full report in your inbox</label>
               <input id="lead-email" name="email" type="email" required />
-              <button className="button button-primary" type="submit" disabled={leadStatus === "loading"}>
+              <button
+                className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                type="submit"
+                disabled={leadStatus === "loading"}
+              >
                 {leadStatus === "loading" ? "Sending..." : "Send report"}
               </button>
-              {leadStatus !== "idle" && <p className="hero-note">{leadMessage}</p>}
+              {leadStatus !== "idle" && <p className="text-sm text-slate-300">{leadMessage}</p>}
             </form>
 
-            <div className="cta-actions">
-              <button className="button button-ghost" type="button" onClick={handleCopyShareText}>
+            <div className="flex flex-wrap gap-3">
+              <button
+                className="rounded-lg border border-slate-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                type="button"
+                onClick={handleCopyShareText}
+              >
                 Copy share text
               </button>
-              <button className="button button-ghost" type="button" onClick={handleCopyShareLink}>
+              <button
+                className="rounded-lg border border-slate-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                type="button"
+                onClick={handleCopyShareLink}
+              >
                 Copy share link
               </button>
               <a
-                className="button button-ghost"
+                className="rounded-lg border border-slate-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
                 href={linkedInUrl}
                 target="_blank"
                 rel="noreferrer"
@@ -301,11 +331,14 @@ export function ScoreAssessmentForm() {
               >
                 Share on LinkedIn
               </a>
+              <Link
+                className="rounded-lg border border-slate-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                href={result.shareUrl}
+              >
+                Open saved result
+              </Link>
             </div>
-            <Link className="button button-ghost" href={result.shareUrl}>
-              Open saved result
-            </Link>
-          </div>
+          </>
         )}
       </div>
     </div>
