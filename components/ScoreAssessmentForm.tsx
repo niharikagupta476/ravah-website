@@ -54,6 +54,12 @@ const metricLabels: Record<ScoreMetricKey, string> = {
   devEx: "DevEx",
 };
 
+const controlClassName =
+  "rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
+
+const submitButtonClassName =
+  "mt-6 inline-flex h-11 w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70";
+
 export function ScoreAssessmentForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "error" | "success">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -188,37 +194,37 @@ export function ScoreAssessmentForm() {
         <div className="form-row gap-4">
           <div>
             <label className="text-white" htmlFor="delivery">Delivery</label>
-            <input id="delivery" name="delivery" type="number" min={0} max={100} defaultValue={60} required />
+            <input className={controlClassName} id="delivery" name="delivery" type="number" min={0} max={100} defaultValue={60} required />
           </div>
           <div>
             <label className="text-white" htmlFor="cost">Cost</label>
-            <input id="cost" name="cost" type="number" min={0} max={100} defaultValue={60} required />
+            <input className={controlClassName} id="cost" name="cost" type="number" min={0} max={100} defaultValue={60} required />
           </div>
         </div>
 
         <div className="form-row gap-4">
           <div>
             <label className="text-white" htmlFor="architecture">Architecture</label>
-            <input id="architecture" name="architecture" type="number" min={0} max={100} defaultValue={60} required />
+            <input className={controlClassName} id="architecture" name="architecture" type="number" min={0} max={100} defaultValue={60} required />
           </div>
           <div>
             <label className="text-white" htmlFor="reliability">Reliability</label>
-            <input id="reliability" name="reliability" type="number" min={0} max={100} defaultValue={60} required />
+            <input className={controlClassName} id="reliability" name="reliability" type="number" min={0} max={100} defaultValue={60} required />
           </div>
         </div>
 
         <div className="form-row gap-4">
           <div>
             <label className="text-white" htmlFor="ai">AI</label>
-            <input id="ai" name="ai" type="number" min={0} max={100} defaultValue={60} required />
+            <input className={controlClassName} id="ai" name="ai" type="number" min={0} max={100} defaultValue={60} required />
           </div>
           <div>
             <label className="text-white" htmlFor="devEx">DevEx</label>
-            <input id="devEx" name="devEx" type="number" min={0} max={100} defaultValue={60} required />
+            <input className={controlClassName} id="devEx" name="devEx" type="number" min={0} max={100} defaultValue={60} required />
           </div>
         </div>
 
-        <button className="button button-primary px-5 py-3 text-sm" type="submit" disabled={status === "loading"}>
+        <button className={submitButtonClassName} type="submit" disabled={status === "loading"}>
           {status === "loading" ? "Calculating..." : "Calculate Score"}
         </button>
         {status === "error" && (
@@ -279,7 +285,7 @@ export function ScoreAssessmentForm() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/product"
-                  className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  className="inline-flex h-11 w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70"
                   onClick={() => trackEvent("score_cta_click", { cta: "start_using_ravah" })}
                 >
                   Start Using Ravah
@@ -296,9 +302,9 @@ export function ScoreAssessmentForm() {
 
             <form className="form space-y-3" onSubmit={handleCaptureLead}>
               <label className="text-white" htmlFor="lead-email">Get full report in your inbox</label>
-              <input id="lead-email" name="email" type="email" required />
+              <input className={controlClassName} id="lead-email" name="email" type="email" required />
               <button
-                className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                className="inline-flex h-11 w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70"
                 type="submit"
                 disabled={leadStatus === "loading"}
               >
