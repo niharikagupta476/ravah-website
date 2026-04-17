@@ -1,0 +1,30 @@
+[
+  {
+    "title": "On-call triage",
+    "problem": "Responders lose time collecting context from fragmented incident tooling.",
+    "solution": "Ravah correlates alerts, logs, and deploy history into one evidence-first timeline.",
+    "output": "Prioritized probable causes with suggested runbook actions.",
+    "impact": "Faster handoffs and lower escalation fatigue for on-call engineers."
+  },
+  {
+    "title": "CI/CD failures",
+    "problem": "Pipeline failures are noisy and root cause takes too long to isolate.",
+    "solution": "Ravah highlights risky commits, flaky tests, and environment drift before release.",
+    "output": "Failure clustering and rollback-ready remediation suggestions.",
+    "impact": "Higher deployment confidence and fewer production regressions."
+  },
+  {
+    "title": "Noisy alerts",
+    "problem": "Teams receive duplicate alerts that hide real service degradation.",
+    "solution": "Ravah deduplicates alerts and surfaces impact-ranked incidents.",
+    "output": "Actionable incident queue with service ownership context.",
+    "impact": "Reduced alert fatigue and improved response focus."
+  },
+  {
+    "title": "Postmortems",
+    "problem": "Post-incident analysis is manual and inconsistent across teams.",
+    "solution": "Ravah auto-builds timelines and captures remediation tasks from evidence.",
+    "output": "Structured postmortem draft with owners and follow-up actions.",
+    "impact": "More reliable learning loops and better prevention planning."
+  }
+]
