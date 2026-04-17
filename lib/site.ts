@@ -6,7 +6,7 @@ export const siteConfig = {
   ogImage: "https://ravah.ai/og.png",
   links: {
     docs: "/docs",
-    demo: "/contact",
+    demo: "/contact?source=request_demo",
   },
   keywords: [
     "DevOps Copilot",
@@ -30,7 +30,7 @@ export const navLinks = [
 export const footerLinks = {
   Product: [
     { href: "/product", label: "Overview" },
-    { href: "/ravah-score", label: "Ravah Score" },
+    { href: "/score", label: "Ravah Score" },
     { href: "/use-cases", label: "Use Cases" },
     { href: "/integrations", label: "Integrations" },
     { href: "/pricing", label: "Pricing" },

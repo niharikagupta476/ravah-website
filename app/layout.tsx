@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
+import { PageViewTracker } from "@/components/PageViewTracker";
 import { siteConfig, structuredData } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={inter.className}>
       <body>
         <AnalyticsProvider />
+        <PageViewTracker />
         <Navbar />
         <main>{children}</main>
         <Footer />

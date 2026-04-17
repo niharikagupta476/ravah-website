@@ -4,7 +4,7 @@ const links = [
   { href: "/product", label: "Product" },
   { href: "/docs", label: "Docs" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/ravah-score", label: "Ravah Score" },
+  { href: "/score", label: "Ravah Score" },
 ];
 
 export function LandingFooter() {

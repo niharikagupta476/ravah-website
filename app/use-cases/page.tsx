@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { Section } from "@/components/Section";
-import { FeatureGrid } from "@/components/FeatureGrid";
 import { CTA } from "@/components/CTA";
+import { useCaseItems } from "@/lib/use-cases";
 
 export const metadata: Metadata = {
   title: "Use Cases",
@@ -11,29 +11,6 @@ export const metadata: Metadata = {
     canonical: "/use-cases",
   },
 };
-
-const useCases = [
-  {
-    title: "On-call triage",
-    description:
-      "Provide responders with summarized evidence, likely impact, and next steps within minutes.",
-  },
-  {
-    title: "CI/CD failures",
-    description:
-      "Identify flaky tests, dependency drift, and environment regressions before they hit production.",
-  },
-  {
-    title: "Noisy alerts",
-    description:
-      "Cluster repetitive alerts, suppress duplicates, and highlight real service degradation.",
-  },
-  {
-    title: "Postmortems",
-    description:
-      "Auto-generate timelines and action items so teams can focus on remediation and learnings.",
-  },
-];
 
 export default function UseCasesPage() {
   return (
@@ -47,18 +24,33 @@ export default function UseCasesPage() {
             aligned and moving fast.
           </p>
         </div>
-        <FeatureGrid
-          title="DevOps + SRE workflows"
-          subtitle="Designed to meet SLOs, reduce alert fatigue, and drive faster recovery."
-          features={useCases}
-        />
+
+        <div className="grid-3">
+          {useCaseItems.map((useCase) => (
+            <article className="card" key={useCase.title}>
+              <h3>{useCase.title}</h3>
+              <p>
+                <strong>Problem:</strong> {useCase.problem}
+              </p>
+              <p>
+                <strong>Ravah Solution:</strong> {useCase.solution}
+              </p>
+              <p>
+                <strong>Output:</strong> {useCase.output}
+              </p>
+              <p>
+                <strong>Impact:</strong> {useCase.impact}
+              </p>
+            </article>
+          ))}
+        </div>
       </Section>
 
       <Section className="alt">
         <CTA
           title="Map your workflows to Ravah"
           description="We will review your current tooling and recommend the right copilots."
-          primary={{ href: "/contact", label: "Request Demo" }}
+          primary={{ href: "/contact?source=request_demo", label: "Request Demo" }}
           secondary={{ href: "/integrations", label: "See integrations" }}
         />
       </Section>

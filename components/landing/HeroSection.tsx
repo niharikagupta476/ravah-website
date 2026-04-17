@@ -19,14 +19,14 @@ export function HeroSection() {
           </div>
           <div className="flex flex-wrap gap-3">
             <TrackedLink
-              href="/contact"
+              href="/contact?source=get_started"
               event="cta_demo_click"
               className="inline-flex items-center rounded-xl bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
             >
               Get Started
             </TrackedLink>
             <TrackedLink
-              href="/ravah-score"
+              href="/score"
               event="cta_docs_click"
               className="inline-flex items-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10"
             >

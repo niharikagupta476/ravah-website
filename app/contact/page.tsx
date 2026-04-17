@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Section } from "@/components/Section";
 import { DemoForm } from "@/components/DemoForm";
+import { normalizeContactSource } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -11,7 +12,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ContactPage() {
+interface ContactPageProps {
+  searchParams?: {
+    source?: string;
+  };
+}
+
+export default function ContactPage({ searchParams }: ContactPageProps) {
+  const source = normalizeContactSource(searchParams?.source);
+
   return (
     <Section>
       <div className="section-header">
@@ -24,7 +33,7 @@ export default function ContactPage() {
       </div>
       <div className="grid-3">
         <div className="card" style={{ gridColumn: "span 2" }}>
-          <DemoForm />
+          <DemoForm source={source} />
         </div>
         <div className="stack">
           <div className="card">

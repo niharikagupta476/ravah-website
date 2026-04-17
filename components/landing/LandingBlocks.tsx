@@ -96,7 +96,7 @@ export function ScoreSection() {
           <p className="text-sm text-slate-300">Quick readiness assessment • 3 minutes • no integration needed</p>
         </div>
         <TrackedLink
-          href="/ravah-score"
+          href="/score"
           event="cta_docs_click"
           className="inline-flex rounded-xl bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
         >

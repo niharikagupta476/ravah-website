@@ -7,7 +7,7 @@ Premium, performance-focused marketing site for Ravah.ai. Built with Next.js App
 - React 18
 - TypeScript
 - Tailwind CSS
-- MDX for blog content
+- MDX for docs and blog content
 
 ## Getting Started
 ```bash
@@ -28,13 +28,12 @@ npm run dev
   npm install
   npm run dev
   ```
-- The project includes a startup dependency check (`scripts/ensure-next.js`) that now gives a clear actionable error before running dev/build/start.
+- The project includes a startup dependency check (`scripts/ensure-next.js`) that gives actionable errors before running dev/build/start.
 
 ## Analytics
-Analytics are provider-agnostic via env flags:
+Configure one or more analytics providers with environment variables:
 
 ```bash
-NEXT_PUBLIC_ANALYTICS_PROVIDER=plausible|ga4|posthog
 NEXT_PUBLIC_PLAUSIBLE_DOMAIN=example.com
 NEXT_PUBLIC_GA4_ID=G-XXXXXXX
 NEXT_PUBLIC_POSTHOG_KEY=phc_XXXX
@@ -48,9 +47,22 @@ Tracked events:
 - `form_submit_demo`
 - `newsletter_subscribe`
 
+## APIs
+- `POST /api/contact` validates and processes demo/contact submissions and sends email via Resend.
+- `POST /api/score` calculates a Ravah maturity score for the score page.
+
+Required contact email env vars:
+
+```bash
+RESEND_API_KEY=re_xxx
+CONTACT_FROM_EMAIL=Ravah <noreply@ravah.ai>
+CONTACT_TO_EMAIL=hello@ravah.ai
+```
+
 ## Content
+- Docs content lives in `content/docs/*.mdx`
 - Blog posts live in `content/blog/*.mdx`
-- Marketing pages live in `app/*/page.tsx`
+- Use case data lives in `content/use-cases.json`
 
 ## SEO
 - Metadata configured per page
@@ -59,5 +71,6 @@ Tracked events:
 
 ## Deployment Checklist
 - Set analytics env vars (optional)
+- Set contact API env vars for Resend email delivery
 - Verify `/sitemap.xml`, `/robots.txt`, `/rss.xml`
 - Run `npm run build`

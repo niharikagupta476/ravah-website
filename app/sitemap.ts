@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site";
 import { getAllPosts } from "@/lib/blog";
 import { caseStudies } from "@/lib/case-studies";
+import { getAllDocs } from "@/lib/docs";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
@@ -9,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/product",
     "/use-cases",
     "/pricing",
-    "/ravah-score",
+    "/score",
     "/docs",
     "/security",
     "/integrations",
@@ -29,6 +30,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${base}/case-studies/${study.slug}`,
     lastModified: new Date().toISOString(),
   }));
+  const docs = getAllDocs().map((doc) => ({
+    url: `${base}/docs/${doc.slug}`,
+    lastModified: new Date().toISOString(),
+  }));
 
   return [
     ...routes.map((route) => ({
@@ -37,5 +42,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...posts,
     ...studies,
+    ...docs,
   ];
 }
