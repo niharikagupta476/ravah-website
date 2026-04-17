@@ -11,13 +11,13 @@ export const metadata: Metadata = {
 };
 
 interface ScoreResultPageProps {
-  searchParams?: {
+  searchParams: Promise<{
     id?: string;
-  };
+  }>;
 }
 
-export default function ScoreResultPage({ searchParams }: ScoreResultPageProps) {
-  const id = searchParams?.id;
+export default async function ScoreResultPage({ searchParams }: ScoreResultPageProps) {
+  const { id } = await searchParams;
   const stored = id ? getScoreResult(id) : null;
 
   return (
