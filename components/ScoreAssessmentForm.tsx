@@ -1,12 +1,53 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { trackEvent } from "@/lib/analytics";
+
+type ScoreMetricKey =
+  | "delivery"
+  | "cost"
+  | "architecture"
+  | "reliability"
+  | "ai"
+  | "devEx";
+
+interface MetricBreakdown {
+  raw: number;
+  normalized: number;
+  weight: number;
+  weightedContribution: number;
+}
+
+interface ScoreInsight {
+  metric: ScoreMetricKey;
+  severity: "high" | "medium";
+  title: string;
+  detail: string;
+}
+
+interface ScoreRecommendation {
+  metric: ScoreMetricKey;
+  priority: "p0" | "p1" | "p2";
+  action: string;
+  expectedOutcome: string;
+}
 
 interface ScoreResult {
   score: number;
-  band: string;
-  recommendation: string;
+  breakdown: Record<ScoreMetricKey, MetricBreakdown>;
+  insights: ScoreInsight[];
+  recommendations: ScoreRecommendation[];
+  shareText: string;
 }
+
+const metricLabels: Record<ScoreMetricKey, string> = {
+  delivery: "Delivery",
+  cost: "Cost",
+  architecture: "Architecture",
+  reliability: "Reliability",
+  ai: "AI",
+  devEx: "DevEx",
+};
 
 export function ScoreAssessmentForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "error" | "success">("idle");
@@ -21,12 +62,12 @@ export function ScoreAssessmentForm() {
     const formData = new FormData(event.currentTarget);
 
     const payload = {
-      name: String(formData.get("name") || ""),
-      email: String(formData.get("email") || ""),
       delivery: Number(formData.get("delivery") || 0),
-      reliability: Number(formData.get("reliability") || 0),
       cost: Number(formData.get("cost") || 0),
       architecture: Number(formData.get("architecture") || 0),
+      reliability: Number(formData.get("reliability") || 0),
+      ai: Number(formData.get("ai") || 0),
+      devEx: Number(formData.get("devEx") || 0),
     };
 
     try {
@@ -35,23 +76,30 @@ export function ScoreAssessmentForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = (await response.json()) as {
-        success: boolean;
-        error?: string;
-        result?: ScoreResult;
-      };
+      const data = (await response.json()) as ScoreResult & { error?: string };
 
-      if (!response.ok || !data.success || !data.result) {
+      if (!response.ok) {
         setStatus("error");
         setErrorMessage(data.error || "Unable to calculate score right now.");
         return;
       }
 
-      setResult(data.result);
+      setResult(data);
       setStatus("success");
+      trackEvent("cta_docs_click", { score: String(data.score) });
     } catch {
       setStatus("error");
       setErrorMessage("Network error. Please try again.");
+    }
+  };
+
+  const handleShare = async () => {
+    if (!result) {
+      return;
+    }
+
+    if (navigator?.clipboard?.writeText) {
+      await navigator.clipboard.writeText(result.shareText);
     }
   };
 
@@ -60,19 +108,27 @@ export function ScoreAssessmentForm() {
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-row">
           <div>
-            <label htmlFor="score-name">Name</label>
-            <input id="score-name" name="name" type="text" required />
+            <label htmlFor="delivery">Delivery</label>
+            <input id="delivery" name="delivery" type="number" min={0} max={100} defaultValue={60} required />
           </div>
           <div>
-            <label htmlFor="score-email">Work email</label>
-            <input id="score-email" name="email" type="email" required />
+            <label htmlFor="cost">Cost</label>
+            <input id="cost" name="cost" type="number" min={0} max={100} defaultValue={60} required />
           </div>
         </div>
 
         <div className="form-row">
           <div>
-            <label htmlFor="delivery">Delivery</label>
-            <input id="delivery" name="delivery" type="number" min={1} max={5} defaultValue={3} required />
+            <label htmlFor="architecture">Architecture</label>
+            <input
+              id="architecture"
+              name="architecture"
+              type="number"
+              min={0}
+              max={100}
+              defaultValue={60}
+              required
+            />
           </div>
           <div>
             <label htmlFor="reliability">Reliability</label>
@@ -80,9 +136,9 @@ export function ScoreAssessmentForm() {
               id="reliability"
               name="reliability"
               type="number"
-              min={1}
-              max={5}
-              defaultValue={3}
+              min={0}
+              max={100}
+              defaultValue={60}
               required
             />
           </div>
@@ -90,20 +146,12 @@ export function ScoreAssessmentForm() {
 
         <div className="form-row">
           <div>
-            <label htmlFor="cost">Cost</label>
-            <input id="cost" name="cost" type="number" min={1} max={5} defaultValue={3} required />
+            <label htmlFor="ai">AI</label>
+            <input id="ai" name="ai" type="number" min={0} max={100} defaultValue={60} required />
           </div>
           <div>
-            <label htmlFor="architecture">Architecture</label>
-            <input
-              id="architecture"
-              name="architecture"
-              type="number"
-              min={1}
-              max={5}
-              defaultValue={3}
-              required
-            />
+            <label htmlFor="devEx">DevEx</label>
+            <input id="devEx" name="devEx" type="number" min={0} max={100} defaultValue={60} required />
           </div>
         </div>
 
@@ -119,12 +167,45 @@ export function ScoreAssessmentForm() {
 
       <div className="card">
         <h3>Your Ravah Score</h3>
-        {!result && <p className="hero-note">Submit the form to benchmark your current maturity.</p>}
+        {!result && <p className="hero-note">Submit the wizard to see your score breakdown and actions.</p>}
         {result && (
           <div className="stack">
             <p className="price">{result.score}</p>
-            <p className="eyebrow">{result.band}</p>
-            <p>{result.recommendation}</p>
+            <p className="hero-note">{result.shareText}</p>
+
+            <div className="stack">
+              {Object.entries(result.breakdown).map(([metric, value]) => (
+                <p key={metric}>
+                  <strong>{metricLabels[metric as ScoreMetricKey]}:</strong> {value.normalized}/1000
+                </p>
+              ))}
+            </div>
+
+            <div className="stack">
+              <h4>Insights</h4>
+              {result.insights.length === 0 ? (
+                <p className="hero-note">No critical issues detected.</p>
+              ) : (
+                result.insights.map((insight) => (
+                  <p key={`${insight.metric}-${insight.title}`}>
+                    <strong>{insight.title}:</strong> {insight.detail}
+                  </p>
+                ))
+              )}
+            </div>
+
+            <div className="stack">
+              <h4>Recommendations</h4>
+              {result.recommendations.map((recommendation) => (
+                <p key={`${recommendation.metric}-${recommendation.priority}`}>
+                  <strong>{recommendation.priority.toUpperCase()}:</strong> {recommendation.action}
+                </p>
+              ))}
+            </div>
+
+            <button className="button button-ghost" type="button" onClick={handleShare}>
+              Copy share text
+            </button>
           </div>
         )}
       </div>
