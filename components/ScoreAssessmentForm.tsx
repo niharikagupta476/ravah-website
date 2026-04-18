@@ -45,6 +45,52 @@ interface ScoreResult {
   shareUrl: string;
 }
 
+interface FormValues {
+  deploymentsPerDay: string;
+  leadTimeMinutes: string;
+  changeFailureRate: string;
+  mttrMinutes: string;
+  monthlyCloudCost: string;
+  idleResourcesPercent: string;
+  costPerDeployment: string;
+  autoscalingCoverage: string;
+  multiAzCoverage: string;
+  observabilityCoverage: string;
+  iacCoverage: string;
+  incidentsPerMonth: string;
+  slaUptime: string;
+  autoRemediation: string;
+  aiUsagePercent: string;
+  aiAlertReduction: string;
+  aiUsageFrequency: string;
+  buildTimeMinutes: string;
+  setupTimeMinutes: string;
+  deploymentFriction: string;
+}
+
+const initialValues: FormValues = {
+  deploymentsPerDay: "3",
+  leadTimeMinutes: "120",
+  changeFailureRate: "10",
+  mttrMinutes: "45",
+  monthlyCloudCost: "5000",
+  idleResourcesPercent: "20",
+  costPerDeployment: "50",
+  autoscalingCoverage: "70",
+  multiAzCoverage: "80",
+  observabilityCoverage: "75",
+  iacCoverage: "85",
+  incidentsPerMonth: "4",
+  slaUptime: "99.5",
+  autoRemediation: "35",
+  aiUsagePercent: "25",
+  aiAlertReduction: "15",
+  aiUsageFrequency: "4",
+  buildTimeMinutes: "18",
+  setupTimeMinutes: "30",
+  deploymentFriction: "4",
+};
+
 const metricLabels: Record<ScoreMetricKey, string> = {
   delivery: "Delivery",
   cost: "Cost",
@@ -55,12 +101,184 @@ const metricLabels: Record<ScoreMetricKey, string> = {
 };
 
 const controlClassName =
-  "rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
+  "rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
 const submitButtonClassName =
-  "mt-6 inline-flex h-11 w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70";
+  "mt-6 inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70 sm:w-auto";
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function getFieldError(name: keyof FormValues, value: string) {
+  if (value.trim() === "") {
+    return "Required";
+  }
+
+  const num = Number(value);
+  if (!Number.isFinite(num)) {
+    return "Enter a valid number";
+  }
+
+  const percentFields: Array<keyof FormValues> = [
+    "changeFailureRate",
+    "idleResourcesPercent",
+    "autoscalingCoverage",
+    "multiAzCoverage",
+    "observabilityCoverage",
+    "iacCoverage",
+    "slaUptime",
+    "autoRemediation",
+    "aiUsagePercent",
+    "aiAlertReduction",
+  ];
+
+  if (percentFields.includes(name)) {
+    if (num < 0 || num > 100) {
+      return "Must be between 0 and 100";
+    }
+    return "";
+  }
+
+  if (name === "deploymentFriction") {
+    if (num < 0 || num > 10) {
+      return "Must be between 0 and 10";
+    }
+    return "";
+  }
+
+  if (num < 0) {
+    return "Must be 0 or greater";
+  }
+
+  return "";
+}
+
+function fieldToNumber(values: FormValues, key: keyof FormValues) {
+  return Number(values[key]);
+}
+
+function aggregatePayload(values: FormValues) {
+  const deploymentsPerDay = fieldToNumber(values, "deploymentsPerDay");
+  const leadTimeMinutes = fieldToNumber(values, "leadTimeMinutes");
+  const changeFailureRate = fieldToNumber(values, "changeFailureRate");
+  const mttrMinutes = fieldToNumber(values, "mttrMinutes");
+
+  const monthlyCloudCost = fieldToNumber(values, "monthlyCloudCost");
+  const idleResourcesPercent = fieldToNumber(values, "idleResourcesPercent");
+  const costPerDeployment = fieldToNumber(values, "costPerDeployment");
+
+  const autoscalingCoverage = fieldToNumber(values, "autoscalingCoverage");
+  const multiAzCoverage = fieldToNumber(values, "multiAzCoverage");
+  const observabilityCoverage = fieldToNumber(values, "observabilityCoverage");
+  const iacCoverage = fieldToNumber(values, "iacCoverage");
+
+  const incidentsPerMonth = fieldToNumber(values, "incidentsPerMonth");
+  const slaUptime = fieldToNumber(values, "slaUptime");
+  const autoRemediation = fieldToNumber(values, "autoRemediation");
+
+  const aiUsagePercent = fieldToNumber(values, "aiUsagePercent");
+  const aiAlertReduction = fieldToNumber(values, "aiAlertReduction");
+  const aiUsageFrequency = fieldToNumber(values, "aiUsageFrequency");
+
+  const buildTimeMinutes = fieldToNumber(values, "buildTimeMinutes");
+  const setupTimeMinutes = fieldToNumber(values, "setupTimeMinutes");
+  const deploymentFriction = fieldToNumber(values, "deploymentFriction");
+
+  const delivery = (
+    clamp((deploymentsPerDay / 20) * 100, 0, 100) +
+    clamp(100 - (leadTimeMinutes / 720) * 100, 0, 100) +
+    clamp(100 - changeFailureRate, 0, 100) +
+    clamp(100 - (mttrMinutes / 240) * 100, 0, 100)
+  ) / 4;
+
+  const cost = (
+    clamp(100 - (monthlyCloudCost / 50000) * 100, 0, 100) +
+    clamp(100 - idleResourcesPercent, 0, 100) +
+    clamp(100 - (costPerDeployment / 500) * 100, 0, 100)
+  ) / 3;
+
+  const architecture = (
+    clamp(autoscalingCoverage, 0, 100) +
+    clamp(multiAzCoverage, 0, 100) +
+    clamp(observabilityCoverage, 0, 100) +
+    clamp(iacCoverage, 0, 100)
+  ) / 4;
+
+  const reliability = (
+    clamp(100 - (incidentsPerMonth / 30) * 100, 0, 100) +
+    clamp(slaUptime, 0, 100) +
+    clamp(autoRemediation, 0, 100)
+  ) / 3;
+
+  const ai = (
+    clamp(aiUsagePercent, 0, 100) +
+    clamp(aiAlertReduction, 0, 100) +
+    clamp((aiUsageFrequency / 20) * 100, 0, 100)
+  ) / 3;
+
+  const devEx = (
+    clamp(100 - (buildTimeMinutes / 120) * 100, 0, 100) +
+    clamp(100 - (setupTimeMinutes / 240) * 100, 0, 100) +
+    clamp(100 - deploymentFriction * 10, 0, 100)
+  ) / 3;
+
+  return {
+    delivery: Number(delivery.toFixed(2)),
+    cost: Number(cost.toFixed(2)),
+    architecture: Number(architecture.toFixed(2)),
+    reliability: Number(reliability.toFixed(2)),
+    ai: Number(ai.toFixed(2)),
+    devEx: Number(devEx.toFixed(2)),
+  };
+}
+
+function MetricInput({
+  id,
+  label,
+  helper,
+  unit,
+  placeholder,
+  value,
+  error,
+  onChange,
+}: {
+  id: keyof FormValues;
+  label: string;
+  helper: string;
+  unit: string;
+  placeholder: string;
+  value: string;
+  error?: string;
+  onChange: (key: keyof FormValues, value: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-semibold text-white" htmlFor={id}>
+        {label}
+      </label>
+      <p className="text-xs text-slate-400">{helper}</p>
+      <div className="grid grid-cols-[1fr_auto] items-center gap-3">
+        <input
+          className={controlClassName}
+          id={id}
+          name={id}
+          type="number"
+          value={value}
+          placeholder={placeholder}
+          onChange={(event) => onChange(id, event.target.value)}
+          required
+        />
+        <span className="text-xs font-medium text-slate-300">{unit}</span>
+      </div>
+      {error && <p className="text-xs text-rose-300">{error}</p>}
+    </div>
+  );
+}
 
 export function ScoreAssessmentForm() {
+  const [values, setValues] = useState<FormValues>(initialValues);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
   const [status, setStatus] = useState<"idle" | "loading" | "error" | "success">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [leadStatus, setLeadStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -86,24 +304,36 @@ export function ScoreAssessmentForm() {
     }));
   }, [result]);
 
+  const handleChange = (key: keyof FormValues, value: string) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+    setFieldErrors((prev) => ({ ...prev, [key]: getFieldError(key, value) }));
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const nextErrors: Partial<Record<keyof FormValues, string>> = {};
+    (Object.keys(values) as Array<keyof FormValues>).forEach((key) => {
+      const error = getFieldError(key, values[key]);
+      if (error) {
+        nextErrors[key] = error;
+      }
+    });
+
+    setFieldErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      setStatus("error");
+      setErrorMessage("Please fix the highlighted fields before calculating.");
+      return;
+    }
+
     setStatus("loading");
     setErrorMessage("");
     setLeadStatus("idle");
     setLeadMessage("");
     trackEvent("score_started");
 
-    const formData = new FormData(event.currentTarget);
-
-    const payload = {
-      delivery: Number(formData.get("delivery") || 0),
-      cost: Number(formData.get("cost") || 0),
-      architecture: Number(formData.get("architecture") || 0),
-      reliability: Number(formData.get("reliability") || 0),
-      ai: Number(formData.get("ai") || 0),
-      devEx: Number(formData.get("devEx") || 0),
-    };
+    const payload = aggregatePayload(values);
 
     try {
       const response = await fetch("/api/score", {
@@ -189,40 +419,127 @@ export function ScoreAssessmentForm() {
 
   return (
     <div className="mt-8 grid gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 lg:grid-cols-2">
-      <form className="form space-y-4" onSubmit={handleSubmit}>
+      <form className="form max-h-[72vh] space-y-5 overflow-y-auto pr-2" onSubmit={handleSubmit}>
         <h3 className="text-lg font-semibold text-white">Assessment Inputs</h3>
-        <div className="form-row gap-4">
-          <div>
-            <label className="text-white" htmlFor="delivery">Delivery</label>
-            <input className={controlClassName} id="delivery" name="delivery" type="number" min={0} max={100} defaultValue={60} required />
-          </div>
-          <div>
-            <label className="text-white" htmlFor="cost">Cost</label>
-            <input className={controlClassName} id="cost" name="cost" type="number" min={0} max={100} defaultValue={60} required />
-          </div>
-        </div>
 
-        <div className="form-row gap-4">
-          <div>
-            <label className="text-white" htmlFor="architecture">Architecture</label>
-            <input className={controlClassName} id="architecture" name="architecture" type="number" min={0} max={100} defaultValue={60} required />
+        <section className="space-y-4">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Delivery</h4>
+          <div className="grid gap-4">
+            <MetricInput
+              id="deploymentsPerDay"
+              label="Deployments per Day"
+              helper="How many times do you deploy to production daily?"
+              unit="/day"
+              placeholder="e.g. 3"
+              value={values.deploymentsPerDay}
+              error={fieldErrors.deploymentsPerDay}
+              onChange={handleChange}
+            />
+            <MetricInput
+              id="leadTimeMinutes"
+              label="Lead Time"
+              helper="Time from commit to production"
+              unit="minutes"
+              placeholder="e.g. 120"
+              value={values.leadTimeMinutes}
+              error={fieldErrors.leadTimeMinutes}
+              onChange={handleChange}
+            />
+            <MetricInput
+              id="changeFailureRate"
+              label="Failure Rate"
+              helper="Percentage of deployments that fail"
+              unit="%"
+              placeholder="e.g. 10"
+              value={values.changeFailureRate}
+              error={fieldErrors.changeFailureRate}
+              onChange={handleChange}
+            />
+            <MetricInput
+              id="mttrMinutes"
+              label="Mean Time to Recovery"
+              helper="Time to recover from incidents"
+              unit="minutes"
+              placeholder="e.g. 45"
+              value={values.mttrMinutes}
+              error={fieldErrors.mttrMinutes}
+              onChange={handleChange}
+            />
           </div>
-          <div>
-            <label className="text-white" htmlFor="reliability">Reliability</label>
-            <input className={controlClassName} id="reliability" name="reliability" type="number" min={0} max={100} defaultValue={60} required />
-          </div>
-        </div>
+        </section>
 
-        <div className="form-row gap-4">
-          <div>
-            <label className="text-white" htmlFor="ai">AI</label>
-            <input className={controlClassName} id="ai" name="ai" type="number" min={0} max={100} defaultValue={60} required />
+        <section className="space-y-4">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Cost</h4>
+          <div className="grid gap-4">
+            <MetricInput
+              id="monthlyCloudCost"
+              label="Monthly Cloud Cost"
+              helper="Total monthly cloud spend"
+              unit="$/month"
+              placeholder="5000"
+              value={values.monthlyCloudCost}
+              error={fieldErrors.monthlyCloudCost}
+              onChange={handleChange}
+            />
+            <MetricInput
+              id="idleResourcesPercent"
+              label="Idle Resources"
+              helper="Percentage of idle resources in your environment"
+              unit="%"
+              placeholder="20"
+              value={values.idleResourcesPercent}
+              error={fieldErrors.idleResourcesPercent}
+              onChange={handleChange}
+            />
+            <MetricInput
+              id="costPerDeployment"
+              label="Cost per Deployment"
+              helper="Average cost to execute one deployment"
+              unit="$"
+              placeholder="50"
+              value={values.costPerDeployment}
+              error={fieldErrors.costPerDeployment}
+              onChange={handleChange}
+            />
           </div>
-          <div>
-            <label className="text-white" htmlFor="devEx">DevEx</label>
-            <input className={controlClassName} id="devEx" name="devEx" type="number" min={0} max={100} defaultValue={60} required />
+        </section>
+
+        <section className="space-y-4">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Architecture</h4>
+          <div className="grid gap-4">
+            <MetricInput id="autoscalingCoverage" label="Autoscaling Coverage" helper="Services protected by autoscaling" unit="%" placeholder="70" value={values.autoscalingCoverage} error={fieldErrors.autoscalingCoverage} onChange={handleChange} />
+            <MetricInput id="multiAzCoverage" label="Multi-AZ Coverage" helper="Workloads deployed across multiple AZs" unit="%" placeholder="80" value={values.multiAzCoverage} error={fieldErrors.multiAzCoverage} onChange={handleChange} />
+            <MetricInput id="observabilityCoverage" label="Observability Coverage" helper="Services with logs, metrics, traces enabled" unit="%" placeholder="75" value={values.observabilityCoverage} error={fieldErrors.observabilityCoverage} onChange={handleChange} />
+            <MetricInput id="iacCoverage" label="IaC Coverage" helper="Infrastructure managed as code" unit="%" placeholder="85" value={values.iacCoverage} error={fieldErrors.iacCoverage} onChange={handleChange} />
           </div>
-        </div>
+        </section>
+
+        <section className="space-y-4">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Reliability</h4>
+          <div className="grid gap-4">
+            <MetricInput id="incidentsPerMonth" label="Incidents per Month" helper="Production incidents occurring monthly" unit="count" placeholder="4" value={values.incidentsPerMonth} error={fieldErrors.incidentsPerMonth} onChange={handleChange} />
+            <MetricInput id="slaUptime" label="SLA Uptime" helper="Observed uptime against SLA target" unit="%" placeholder="99.5" value={values.slaUptime} error={fieldErrors.slaUptime} onChange={handleChange} />
+            <MetricInput id="autoRemediation" label="Auto-remediation" helper="Incidents resolved automatically" unit="%" placeholder="35" value={values.autoRemediation} error={fieldErrors.autoRemediation} onChange={handleChange} />
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">AI</h4>
+          <div className="grid gap-4">
+            <MetricInput id="aiUsagePercent" label="AI Usage in DevOps" helper="Workflows using AI support" unit="%" placeholder="25" value={values.aiUsagePercent} error={fieldErrors.aiUsagePercent} onChange={handleChange} />
+            <MetricInput id="aiAlertReduction" label="AI Alert Reduction" helper="Alert noise reduced by AI" unit="%" placeholder="15" value={values.aiAlertReduction} error={fieldErrors.aiAlertReduction} onChange={handleChange} />
+            <MetricInput id="aiUsageFrequency" label="AI Usage Frequency" helper="How often teams use AI each week" unit="times/week" placeholder="4" value={values.aiUsageFrequency} error={fieldErrors.aiUsageFrequency} onChange={handleChange} />
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">DevEx</h4>
+          <div className="grid gap-4">
+            <MetricInput id="buildTimeMinutes" label="Build Time" helper="Average CI build duration" unit="minutes" placeholder="18" value={values.buildTimeMinutes} error={fieldErrors.buildTimeMinutes} onChange={handleChange} />
+            <MetricInput id="setupTimeMinutes" label="Dev Setup Time" helper="Time to set up local dev environment" unit="minutes" placeholder="30" value={values.setupTimeMinutes} error={fieldErrors.setupTimeMinutes} onChange={handleChange} />
+            <MetricInput id="deploymentFriction" label="Deployment Friction" helper="Subjective release friction score" unit="/10" placeholder="4" value={values.deploymentFriction} error={fieldErrors.deploymentFriction} onChange={handleChange} />
+          </div>
+        </section>
 
         <button className={submitButtonClassName} type="submit" disabled={status === "loading"}>
           {status === "loading" ? "Calculating..." : "Calculate Score"}
@@ -285,7 +602,7 @@ export function ScoreAssessmentForm() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/product"
-                  className="inline-flex h-11 w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70"
+                  className="inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70 sm:w-auto"
                   onClick={() => trackEvent("score_cta_click", { cta: "start_using_ravah" })}
                 >
                   Start Using Ravah
@@ -304,7 +621,7 @@ export function ScoreAssessmentForm() {
               <label className="text-white" htmlFor="lead-email">Get full report in your inbox</label>
               <input className={controlClassName} id="lead-email" name="email" type="email" required />
               <button
-                className="inline-flex h-11 w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70"
+                className="inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70 sm:w-auto"
                 type="submit"
                 disabled={leadStatus === "loading"}
               >
