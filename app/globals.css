@@ -473,3 +473,26 @@ img {
     justify-content: space-between;
   }
 }
+
+/* ── Score page polish ── */
+.pricing-card .button {
+  width: 100%;
+  margin-top: 4px;
+  justify-content: center;
+  font-size: 0.875rem;
+}
+
+.pricing-card ul li {
+  list-style: none;
+}
+
+/* Ensure form input text is always visible in dark contexts */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.4;
+}
+
+/* Stable button height — prevents layout jump between states */
+.button {
+  min-height: 42px;
+}
