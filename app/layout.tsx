@@ -33,6 +33,11 @@ export const metadata = {
     locale: "en_US",
     type: "website",
   },
+  icons: {
+    icon: [{ url: "/icon.svg" }],
+    apple: [{ url: "/apple-icon.svg" }],
+    shortcut: ["/icon.svg"],
+  },
   twitter: {
     card: "summary_large_image",
     title: "Ravah.ai",
