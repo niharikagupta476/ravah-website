@@ -78,3 +78,17 @@ CONTACT_TO_EMAIL=hello@ravah.ai
 - Set contact API env vars for Resend email delivery
 - Verify `/sitemap.xml`, `/robots.txt`, `/rss.xml`
 - Run `npm run build`
+
+ export RESEND_API_KEY=re_2YsWB4Rf_66s6BNaVjwdAEGjp3X1dwRTE
+  459  npm run dev
+  460  export CONTACT_TO_EMAIL=niharikagupta476@gmail.com
+  461  CONTACT_FROM_EMAIL=niharikagupta476@gmail.com
+  462  export CONTACT_FROM_EMAIL=niharikagupta476@gmail.com
+  463  npm run dev
+  464  CONTACT_FROM_EMAIL=Ravah
+  465  npm run dev
+  466  npm run dev -v
+  467  npm run dev --verbose
+  468  CONTACT_FROM_EMAIL=support@ravah.ai
+  469  npm run dev --verbose
+  470  history
