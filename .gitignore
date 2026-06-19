@@ -3,6 +3,3 @@ node_modules
 out
 .env
 .env.local
-
-# Generated from assets/logo/ravah-logo.png.base64 by scripts/prepare-assets.js
-/public/assets/logo/ravah-logo.png
