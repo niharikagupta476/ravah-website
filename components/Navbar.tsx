@@ -7,7 +7,7 @@ export function Navbar() {
     <header className="nav">
       <div className="container nav-inner">
         <Link href="/" className="logo" aria-label="Ravah.ai home" style={{ display: "inline-flex", alignItems: "center", gap: "10px" }}>
-          <Image src="/assets/logo/ravah-logo.png" alt="Ravah logo" width={1280} height={1280} className="h-9 w-auto sm:h-10" priority />
+          <Image src="/assets/logo/ravah-logo.png?v=3" alt="Ravah logo" width={1280} height={1280} className="h-9 w-auto sm:h-10" priority />
           <span>Ravah.ai</span>
         </Link>
         <nav aria-label="Primary" className="nav-links">

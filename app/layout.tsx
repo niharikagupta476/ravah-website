@@ -34,9 +34,9 @@ export const metadata = {
     type: "website",
   },
   icons: {
-    icon: [{ url: "/assets/logo/ravah-logo.png?v=2", type: "image/png" }],
-    apple: [{ url: "/assets/logo/ravah-logo.png?v=2", type: "image/png" }],
-    shortcut: ["/assets/logo/ravah-logo.png?v=2"],
+    icon: [{ url: "/assets/logo/ravah-logo.png?v=3", type: "image/png" }],
+    apple: [{ url: "/assets/logo/ravah-logo.png?v=3", type: "image/png" }],
+    shortcut: ["/assets/logo/ravah-logo.png?v=3"],
   },
   twitter: {
     card: "summary_large_image",
@@ -48,8 +48,8 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={inter.className}>
-      <body>
+    <html lang="en" className={inter.className} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <AnalyticsProvider />
         <PageViewTracker />
         <Navbar />

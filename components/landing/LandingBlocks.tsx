@@ -125,6 +125,7 @@ export function ProductPreview() {
                   : "border border-white/10 bg-white/[0.03] text-slate-200"
               }`}
               aria-label={`${tab} tab preview`}
+              suppressHydrationWarning
             >
               {tab}
             </button>
