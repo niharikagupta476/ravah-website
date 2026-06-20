@@ -1,0 +1,23 @@
+<svg width="1280" height="1280" viewBox="0 0 1280 1280" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="1280" fill="#000000"/>
+  <g stroke="url(#ravah-gradient)" stroke-width="80" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M640 640C565 515 468 392 337 392C217 392 120 489 120 609C120 729 217 826 337 826C468 826 555 704 640 640C725 576 812 454 943 454C1063 454 1160 551 1160 671C1160 791 1063 888 943 888C812 888 715 765 640 640Z"/>
+    <path d="M640 640C715 515 812 392 943 392C1063 392 1160 489 1160 609C1160 729 1063 826 943 826C812 826 725 704 640 640C555 576 468 454 337 454C217 454 120 551 120 671C120 791 217 888 337 888C468 888 565 765 640 640Z"/>
+    <path d="M250 830C160 910 92 978 92 1060C92 1150 165 1220 337 1220C469 1220 554 1144 606 1038"/>
+    <path d="M1030 830C1120 910 1188 978 1188 1060C1188 1150 1115 1220 943 1220C811 1220 726 1144 674 1038"/>
+  </g>
+  <g fill="#000000">
+    <circle cx="337" cy="609" r="98"/>
+    <circle cx="943" cy="609" r="98"/>
+    <circle cx="640" cy="640" r="96"/>
+    <circle cx="337" cy="1045" r="94"/>
+    <circle cx="943" cy="1045" r="94"/>
+  </g>
+  <defs>
+    <linearGradient id="ravah-gradient" x1="640" y1="40" x2="640" y2="1240" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#25D5DF"/>
+      <stop offset="0.46" stop-color="#2E9ACB"/>
+      <stop offset="1" stop-color="#5B2481"/>
+    </linearGradient>
+  </defs>
+</svg>
