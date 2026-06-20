@@ -268,6 +268,7 @@ function MetricInput({
           placeholder={placeholder}
           onChange={(event) => onChange(id, event.target.value)}
           required
+          suppressHydrationWarning
         />
         <span className="text-xs font-medium text-slate-300">{unit}</span>
       </div>
@@ -541,7 +542,7 @@ export function ScoreAssessmentForm() {
           </div>
         </section>
 
-        <button className={submitButtonClassName} type="submit" disabled={status === "loading"}>
+        <button className={submitButtonClassName} type="submit" disabled={status === "loading"} suppressHydrationWarning>
           {status === "loading" ? "Calculating..." : "Calculate Score"}
         </button>
         {status === "error" && (
@@ -619,11 +620,12 @@ export function ScoreAssessmentForm() {
 
             <form className="form space-y-3" onSubmit={handleCaptureLead}>
               <label className="text-white" htmlFor="lead-email">Get full report in your inbox</label>
-              <input className={controlClassName} id="lead-email" name="email" type="email" required />
+              <input className={controlClassName} id="lead-email" name="email" type="email" required suppressHydrationWarning />
               <button
                 className="inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70 sm:w-auto"
                 type="submit"
                 disabled={leadStatus === "loading"}
+                suppressHydrationWarning
               >
                 {leadStatus === "loading" ? "Sending..." : "Send report"}
               </button>
@@ -635,6 +637,7 @@ export function ScoreAssessmentForm() {
                 className="rounded-lg border border-slate-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
                 type="button"
                 onClick={handleCopyShareText}
+                suppressHydrationWarning
               >
                 Copy share text
               </button>
@@ -642,6 +645,7 @@ export function ScoreAssessmentForm() {
                 className="rounded-lg border border-slate-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
                 type="button"
                 onClick={handleCopyShareLink}
+                suppressHydrationWarning
               >
                 Copy share link
               </button>
