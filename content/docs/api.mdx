@@ -1,0 +1,22 @@
+---
+title: API
+description: API basics and authentication for Ravah integrations.
+order: 4
+---
+
+All API requests use bearer tokens and JSON payloads.
+
+```http
+POST /api/contact
+Content-Type: application/json
+```
+
+```json
+{
+  "name": "Jane Doe",
+  "email": "jane@company.com",
+  "message": "Need a demo for our platform team"
+}
+```
+
+Use API keys with the minimum required scope and rotate regularly.
