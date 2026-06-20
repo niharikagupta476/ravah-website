@@ -34,9 +34,9 @@ export const metadata = {
     type: "website",
   },
   icons: {
-    icon: [{ url: "/assets/logo/ravah-logo.png?v=3", type: "image/png" }],
-    apple: [{ url: "/assets/logo/ravah-logo.png?v=3", type: "image/png" }],
-    shortcut: ["/assets/logo/ravah-logo.png?v=3"],
+    icon: [{ url: "/assets/logo/ravah-logo-v3.png", type: "image/png" }],
+    apple: [{ url: "/assets/logo/ravah-logo-v3.png", type: "image/png" }],
+    shortcut: ["/assets/logo/ravah-logo-v3.png"],
   },
   twitter: {
     card: "summary_large_image",

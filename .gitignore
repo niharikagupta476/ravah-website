@@ -5,4 +5,4 @@ out
 .env.local
 
 # Generated from assets/logo/ravah-logo.png.base64 by scripts/prepare-assets.js
-/public/assets/logo/ravah-logo.png
+/public/assets/logo/ravah-logo-v3.png
