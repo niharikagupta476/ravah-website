@@ -6,9 +6,16 @@ export function Navbar() {
   return (
     <header className="nav">
       <div className="container nav-inner">
-        <Link href="/" className="logo" aria-label="Ravah.ai home" style={{ display: "inline-flex", alignItems: "center", gap: "10px" }}>
-          <Image src="/assets/logo/ravah-logo-v3.png" alt="Ravah logo" width={1280} height={1280} className="h-8 w-auto" priority />
-          <span>Ravah.ai</span>
+        <Link href="/" className="logo" aria-label="Ravah.ai home">
+          <Image
+            src="/assets/logo/ravah-logo-v3.png"
+            alt="Ravah logo"
+            width={1280}
+            height={1280}
+            className="brand-mark"
+            priority
+          />
+          <span className="wordmark">Ravah.ai</span>
         </Link>
         <nav aria-label="Primary" className="nav-links">
           {navLinks.map((link) => (

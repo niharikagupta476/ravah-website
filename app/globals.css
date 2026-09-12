@@ -113,26 +113,46 @@ img {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(247, 248, 250, 0.9);
+  background: rgba(247, 248, 250, 0.94);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
+}
+
+.nav .container {
+  max-width: 1440px;
 }
 
 .nav-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 64px;
-  gap: 16px;
+  min-height: 112px;
+  gap: 28px;
   flex-wrap: nowrap;
 }
 
 .logo {
+  display: inline-flex;
   flex: 0 0 auto;
-  font-weight: 700;
-  font-size: 20px;
+  align-items: center;
+  gap: 24px;
+  color: var(--text);
   line-height: 1;
   white-space: nowrap;
+}
+
+.brand-mark {
+  width: 80px;
+  height: 80px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.wordmark {
+  font-size: 3.25rem;
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
 }
 
 .nav-links {
@@ -472,14 +492,23 @@ img {
   font-size: 0.9rem;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1400px) {
   .nav-links {
     display: none;
   }
 
   .nav-inner {
-    min-height: 60px;
-    gap: 12px;
+    min-height: 92px;
+    gap: 20px;
+  }
+
+  .brand-mark {
+    width: 64px;
+    height: 64px;
+  }
+
+  .wordmark {
+    font-size: 2.5rem;
   }
 
   .nav-cta {
@@ -501,5 +530,43 @@ img {
     right: 16px;
     transform: none;
     justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .nav-inner {
+    min-height: 68px;
+    gap: 14px;
+  }
+
+  .logo {
+    gap: 12px;
+  }
+
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+  }
+
+  .wordmark {
+    font-size: 1.5rem;
+    letter-spacing: -0.03em;
+  }
+
+  .nav-cta {
+    gap: 6px;
+  }
+
+  .nav-cta .button {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .nav-cta > :not(:first-child) {
+    display: none;
   }
 }
