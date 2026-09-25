@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ScorePage() {
   return (
     <div className="min-h-screen bg-slate-950 px-6 py-24 text-slate-100">
-      <div className="mx-auto max-w-4xl rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+      <div className="mx-auto max-w-7xl rounded-2xl border border-white/10 bg-white/[0.03] p-8">
         <p className="text-sm uppercase tracking-widest text-cyan-300">Ravah Score</p>
         <h1 className="mt-3 text-4xl font-semibold">Measure your DevOps maturity instantly</h1>
         <p className="mt-4 text-slate-300">

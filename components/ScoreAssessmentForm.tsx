@@ -101,7 +101,7 @@ const metricLabels: Record<ScoreMetricKey, string> = {
 };
 
 const controlClassName =
-  "rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "h-10 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
 const submitButtonClassName =
   "mt-6 inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70 sm:w-auto";
@@ -253,12 +253,12 @@ function MetricInput({
   onChange: (key: keyof FormValues, value: string) => void;
 }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <label className="text-sm font-semibold text-white" htmlFor={id}>
         {label}
       </label>
       <p className="text-xs text-slate-400">{helper}</p>
-      <div className="grid grid-cols-[1fr_auto] items-center gap-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
         <input
           className={controlClassName}
           id={id}
@@ -419,128 +419,130 @@ export function ScoreAssessmentForm() {
     : "#";
 
   return (
-    <div className="mt-8 grid gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 lg:grid-cols-2">
-      <form className="form max-h-[72vh] space-y-5 overflow-y-auto pr-2" onSubmit={handleSubmit}>
+    <div className="mt-8 grid gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 xl:grid-cols-[minmax(0,1fr)_400px]">
+      <form className="form min-w-0 space-y-5" onSubmit={handleSubmit}>
         <h3 className="text-lg font-semibold text-white">Assessment Inputs</h3>
 
-        <section className="space-y-4">
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Delivery</h4>
-          <div className="grid gap-4">
-            <MetricInput
-              id="deploymentsPerDay"
-              label="Deployments per Day"
-              helper="How many times do you deploy to production daily?"
-              unit="/day"
-              placeholder="e.g. 3"
-              value={values.deploymentsPerDay}
-              error={fieldErrors.deploymentsPerDay}
-              onChange={handleChange}
-            />
-            <MetricInput
-              id="leadTimeMinutes"
-              label="Lead Time"
-              helper="Time from commit to production"
-              unit="minutes"
-              placeholder="e.g. 120"
-              value={values.leadTimeMinutes}
-              error={fieldErrors.leadTimeMinutes}
-              onChange={handleChange}
-            />
-            <MetricInput
-              id="changeFailureRate"
-              label="Failure Rate"
-              helper="Percentage of deployments that fail"
-              unit="%"
-              placeholder="e.g. 10"
-              value={values.changeFailureRate}
-              error={fieldErrors.changeFailureRate}
-              onChange={handleChange}
-            />
-            <MetricInput
-              id="mttrMinutes"
-              label="Mean Time to Recovery"
-              helper="Time to recover from incidents"
-              unit="minutes"
-              placeholder="e.g. 45"
-              value={values.mttrMinutes}
-              error={fieldErrors.mttrMinutes}
-              onChange={handleChange}
-            />
-          </div>
-        </section>
+        <div className="grid gap-4 md:grid-cols-2">
+            <section className="space-y-3 rounded-xl border border-slate-700 bg-slate-900/50 p-4">
+              <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Delivery</h4>
+              <div className="grid gap-4">
+                <MetricInput
+                  id="deploymentsPerDay"
+                  label="Deployments per Day"
+                  helper="How many times do you deploy to production daily?"
+                  unit="/day"
+                  placeholder="e.g. 3"
+                  value={values.deploymentsPerDay}
+                  error={fieldErrors.deploymentsPerDay}
+                  onChange={handleChange}
+                />
+                <MetricInput
+                  id="leadTimeMinutes"
+                  label="Lead Time"
+                  helper="Time from commit to production"
+                  unit="minutes"
+                  placeholder="e.g. 120"
+                  value={values.leadTimeMinutes}
+                  error={fieldErrors.leadTimeMinutes}
+                  onChange={handleChange}
+                />
+                <MetricInput
+                  id="changeFailureRate"
+                  label="Failure Rate"
+                  helper="Percentage of deployments that fail"
+                  unit="%"
+                  placeholder="e.g. 10"
+                  value={values.changeFailureRate}
+                  error={fieldErrors.changeFailureRate}
+                  onChange={handleChange}
+                />
+                <MetricInput
+                  id="mttrMinutes"
+                  label="Mean Time to Recovery"
+                  helper="Time to recover from incidents"
+                  unit="minutes"
+                  placeholder="e.g. 45"
+                  value={values.mttrMinutes}
+                  error={fieldErrors.mttrMinutes}
+                  onChange={handleChange}
+                />
+              </div>
+            </section>
 
-        <section className="space-y-4">
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Cost</h4>
-          <div className="grid gap-4">
-            <MetricInput
-              id="monthlyCloudCost"
-              label="Monthly Cloud Cost"
-              helper="Total monthly cloud spend"
-              unit="$/month"
-              placeholder="5000"
-              value={values.monthlyCloudCost}
-              error={fieldErrors.monthlyCloudCost}
-              onChange={handleChange}
-            />
-            <MetricInput
-              id="idleResourcesPercent"
-              label="Idle Resources"
-              helper="Percentage of idle resources in your environment"
-              unit="%"
-              placeholder="20"
-              value={values.idleResourcesPercent}
-              error={fieldErrors.idleResourcesPercent}
-              onChange={handleChange}
-            />
-            <MetricInput
-              id="costPerDeployment"
-              label="Cost per Deployment"
-              helper="Average cost to execute one deployment"
-              unit="$"
-              placeholder="50"
-              value={values.costPerDeployment}
-              error={fieldErrors.costPerDeployment}
-              onChange={handleChange}
-            />
-          </div>
-        </section>
+          <section className="space-y-3 rounded-xl border border-slate-700 bg-slate-900/50 p-4">
+            <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Cost</h4>
+            <div className="grid gap-4">
+              <MetricInput
+                id="monthlyCloudCost"
+                label="Monthly Cloud Cost"
+                helper="Total monthly cloud spend"
+                unit="$/month"
+                placeholder="5000"
+                value={values.monthlyCloudCost}
+                error={fieldErrors.monthlyCloudCost}
+                onChange={handleChange}
+              />
+              <MetricInput
+                id="idleResourcesPercent"
+                label="Idle Resources"
+                helper="Percentage of idle resources in your environment"
+                unit="%"
+                placeholder="20"
+                value={values.idleResourcesPercent}
+                error={fieldErrors.idleResourcesPercent}
+                onChange={handleChange}
+              />
+              <MetricInput
+                id="costPerDeployment"
+                label="Cost per Deployment"
+                helper="Average cost to execute one deployment"
+                unit="$"
+                placeholder="50"
+                value={values.costPerDeployment}
+                error={fieldErrors.costPerDeployment}
+                onChange={handleChange}
+              />
+            </div>
+          </section>
 
-        <section className="space-y-4">
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Architecture</h4>
-          <div className="grid gap-4">
-            <MetricInput id="autoscalingCoverage" label="Autoscaling Coverage" helper="Services protected by autoscaling" unit="%" placeholder="70" value={values.autoscalingCoverage} error={fieldErrors.autoscalingCoverage} onChange={handleChange} />
-            <MetricInput id="multiAzCoverage" label="Multi-AZ Coverage" helper="Workloads deployed across multiple AZs" unit="%" placeholder="80" value={values.multiAzCoverage} error={fieldErrors.multiAzCoverage} onChange={handleChange} />
-            <MetricInput id="observabilityCoverage" label="Observability Coverage" helper="Services with logs, metrics, traces enabled" unit="%" placeholder="75" value={values.observabilityCoverage} error={fieldErrors.observabilityCoverage} onChange={handleChange} />
-            <MetricInput id="iacCoverage" label="IaC Coverage" helper="Infrastructure managed as code" unit="%" placeholder="85" value={values.iacCoverage} error={fieldErrors.iacCoverage} onChange={handleChange} />
-          </div>
-        </section>
+          <section className="space-y-3 rounded-xl border border-slate-700 bg-slate-900/50 p-4">
+            <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Architecture</h4>
+            <div className="grid gap-4">
+              <MetricInput id="autoscalingCoverage" label="Autoscaling Coverage" helper="Services protected by autoscaling" unit="%" placeholder="70" value={values.autoscalingCoverage} error={fieldErrors.autoscalingCoverage} onChange={handleChange} />
+              <MetricInput id="multiAzCoverage" label="Multi-AZ Coverage" helper="Workloads deployed across multiple AZs" unit="%" placeholder="80" value={values.multiAzCoverage} error={fieldErrors.multiAzCoverage} onChange={handleChange} />
+              <MetricInput id="observabilityCoverage" label="Observability Coverage" helper="Services with logs, metrics, traces enabled" unit="%" placeholder="75" value={values.observabilityCoverage} error={fieldErrors.observabilityCoverage} onChange={handleChange} />
+              <MetricInput id="iacCoverage" label="IaC Coverage" helper="Infrastructure managed as code" unit="%" placeholder="85" value={values.iacCoverage} error={fieldErrors.iacCoverage} onChange={handleChange} />
+            </div>
+          </section>
 
-        <section className="space-y-4">
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Reliability</h4>
-          <div className="grid gap-4">
-            <MetricInput id="incidentsPerMonth" label="Incidents per Month" helper="Production incidents occurring monthly" unit="count" placeholder="4" value={values.incidentsPerMonth} error={fieldErrors.incidentsPerMonth} onChange={handleChange} />
-            <MetricInput id="slaUptime" label="SLA Uptime" helper="Observed uptime against SLA target" unit="%" placeholder="99.5" value={values.slaUptime} error={fieldErrors.slaUptime} onChange={handleChange} />
-            <MetricInput id="autoRemediation" label="Auto-remediation" helper="Incidents resolved automatically" unit="%" placeholder="35" value={values.autoRemediation} error={fieldErrors.autoRemediation} onChange={handleChange} />
-          </div>
-        </section>
+          <section className="space-y-3 rounded-xl border border-slate-700 bg-slate-900/50 p-4">
+            <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Reliability</h4>
+            <div className="grid gap-4">
+              <MetricInput id="incidentsPerMonth" label="Incidents per Month" helper="Production incidents occurring monthly" unit="count" placeholder="4" value={values.incidentsPerMonth} error={fieldErrors.incidentsPerMonth} onChange={handleChange} />
+              <MetricInput id="slaUptime" label="SLA Uptime" helper="Observed uptime against SLA target" unit="%" placeholder="99.5" value={values.slaUptime} error={fieldErrors.slaUptime} onChange={handleChange} />
+              <MetricInput id="autoRemediation" label="Auto-remediation" helper="Incidents resolved automatically" unit="%" placeholder="35" value={values.autoRemediation} error={fieldErrors.autoRemediation} onChange={handleChange} />
+            </div>
+          </section>
 
-        <section className="space-y-4">
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">AI</h4>
-          <div className="grid gap-4">
-            <MetricInput id="aiUsagePercent" label="AI Usage in DevOps" helper="Workflows using AI support" unit="%" placeholder="25" value={values.aiUsagePercent} error={fieldErrors.aiUsagePercent} onChange={handleChange} />
-            <MetricInput id="aiAlertReduction" label="AI Alert Reduction" helper="Alert noise reduced by AI" unit="%" placeholder="15" value={values.aiAlertReduction} error={fieldErrors.aiAlertReduction} onChange={handleChange} />
-            <MetricInput id="aiUsageFrequency" label="AI Usage Frequency" helper="How often teams use AI each week" unit="times/week" placeholder="4" value={values.aiUsageFrequency} error={fieldErrors.aiUsageFrequency} onChange={handleChange} />
-          </div>
-        </section>
+          <section className="space-y-3 rounded-xl border border-slate-700 bg-slate-900/50 p-4">
+            <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">AI</h4>
+            <div className="grid gap-4">
+              <MetricInput id="aiUsagePercent" label="AI Usage in DevOps" helper="Workflows using AI support" unit="%" placeholder="25" value={values.aiUsagePercent} error={fieldErrors.aiUsagePercent} onChange={handleChange} />
+              <MetricInput id="aiAlertReduction" label="AI Alert Reduction" helper="Alert noise reduced by AI" unit="%" placeholder="15" value={values.aiAlertReduction} error={fieldErrors.aiAlertReduction} onChange={handleChange} />
+              <MetricInput id="aiUsageFrequency" label="AI Usage Frequency" helper="How often teams use AI each week" unit="times/week" placeholder="4" value={values.aiUsageFrequency} error={fieldErrors.aiUsageFrequency} onChange={handleChange} />
+            </div>
+          </section>
 
-        <section className="space-y-4">
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">DevEx</h4>
-          <div className="grid gap-4">
-            <MetricInput id="buildTimeMinutes" label="Build Time" helper="Average CI build duration" unit="minutes" placeholder="18" value={values.buildTimeMinutes} error={fieldErrors.buildTimeMinutes} onChange={handleChange} />
-            <MetricInput id="setupTimeMinutes" label="Dev Setup Time" helper="Time to set up local dev environment" unit="minutes" placeholder="30" value={values.setupTimeMinutes} error={fieldErrors.setupTimeMinutes} onChange={handleChange} />
-            <MetricInput id="deploymentFriction" label="Deployment Friction" helper="Subjective release friction score" unit="/10" placeholder="4" value={values.deploymentFriction} error={fieldErrors.deploymentFriction} onChange={handleChange} />
-          </div>
-        </section>
+          <section className="space-y-3 rounded-xl border border-slate-700 bg-slate-900/50 p-4">
+            <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-200">DevEx</h4>
+            <div className="grid gap-4">
+              <MetricInput id="buildTimeMinutes" label="Build Time" helper="Average CI build duration" unit="minutes" placeholder="18" value={values.buildTimeMinutes} error={fieldErrors.buildTimeMinutes} onChange={handleChange} />
+              <MetricInput id="setupTimeMinutes" label="Dev Setup Time" helper="Time to set up local dev environment" unit="minutes" placeholder="30" value={values.setupTimeMinutes} error={fieldErrors.setupTimeMinutes} onChange={handleChange} />
+              <MetricInput id="deploymentFriction" label="Deployment Friction" helper="Subjective release friction score" unit="/10" placeholder="4" value={values.deploymentFriction} error={fieldErrors.deploymentFriction} onChange={handleChange} />
+            </div>
+          </section>
+        </div>
 
         <button className={submitButtonClassName} type="submit" disabled={status === "loading"} suppressHydrationWarning>
           {status === "loading" ? "Calculating..." : "Calculate Score"}
@@ -552,7 +554,7 @@ export function ScoreAssessmentForm() {
         )}
       </form>
 
-      <div className="space-y-6 rounded-2xl border border-slate-700 bg-slate-900 p-8 text-white">
+      <div className="min-w-0 space-y-6 rounded-2xl border border-slate-700 bg-slate-900 p-8 text-white">
         {!result && (
           <div className="space-y-3">
             <h3 className="text-xl font-semibold text-white">Your Ravah Score</h3>
