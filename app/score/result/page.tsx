@@ -37,14 +37,14 @@ export default async function ScoreResultPage({ searchParams }: ScoreResultPageP
 
         {stored && (
           <div className="stack">
-            <h1 className="mt-3 text-3xl font-semibold">Your Ravah Score: {stored.result.score}</h1>
+            <h1 className="mt-3 text-3xl font-semibold">Your Ravah Score: {stored.result.score ?? "Insufficient data"}</h1>
             <p className="text-slate-300">{stored.result.shareText}</p>
 
             <div className="card">
               <h3>Breakdown</h3>
               {Object.entries(stored.result.breakdown).map(([metric, value]) => (
                 <p key={metric}>
-                  <strong>{metric}:</strong> {value.normalized}/1000
+                  <strong>{metric}:</strong> {value.normalized ?? "Insufficient data"}{value.normalized === null ? "" : "/1000"}
                 </p>
               ))}
             </div>

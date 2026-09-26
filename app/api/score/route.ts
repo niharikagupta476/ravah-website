@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { calculateRavahScore, parseScoreInput } from "@/lib/score/engine";
-import type { ScoreMetricKey } from "@/lib/score/types";
+import type { ScoreFieldKey } from "@/lib/score/types";
 import { saveScoreResult } from "@/lib/score/store";
 
 export async function POST(request: Request) {
   try {
-    const payload = (await request.json()) as Partial<Record<ScoreMetricKey, unknown>>;
+    const payload = (await request.json()) as Partial<Record<ScoreFieldKey, unknown>>;
     const parsed = parseScoreInput(payload);
 
     if (!parsed.ok) {

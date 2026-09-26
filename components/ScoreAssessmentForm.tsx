@@ -15,8 +15,8 @@ type ScoreMetricKey =
   | "devEx";
 
 interface MetricBreakdown {
-  raw: number;
-  normalized: number;
+  raw: number | null;
+  normalized: number | null;
   weight: number;
   weightedContribution: number;
 }
@@ -36,7 +36,7 @@ interface ScoreRecommendation {
 }
 
 interface ScoreResult {
-  score: number;
+  score: number | null;
   breakdown: Record<ScoreMetricKey, MetricBreakdown>;
   insights: ScoreInsight[];
   recommendations: ScoreRecommendation[];
@@ -106,10 +106,6 @@ const controlClassName =
 const submitButtonClassName =
   "mt-6 inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70 sm:w-auto";
 
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
-}
-
 function getFieldError(name: keyof FormValues, value: string) {
   if (value.trim() === "") {
     return "Required";
@@ -152,85 +148,6 @@ function getFieldError(name: keyof FormValues, value: string) {
   }
 
   return "";
-}
-
-function fieldToNumber(values: FormValues, key: keyof FormValues) {
-  return Number(values[key]);
-}
-
-function aggregatePayload(values: FormValues) {
-  const deploymentsPerDay = fieldToNumber(values, "deploymentsPerDay");
-  const leadTimeMinutes = fieldToNumber(values, "leadTimeMinutes");
-  const changeFailureRate = fieldToNumber(values, "changeFailureRate");
-  const mttrMinutes = fieldToNumber(values, "mttrMinutes");
-
-  const monthlyCloudCost = fieldToNumber(values, "monthlyCloudCost");
-  const idleResourcesPercent = fieldToNumber(values, "idleResourcesPercent");
-  const costPerDeployment = fieldToNumber(values, "costPerDeployment");
-
-  const autoscalingCoverage = fieldToNumber(values, "autoscalingCoverage");
-  const multiAzCoverage = fieldToNumber(values, "multiAzCoverage");
-  const observabilityCoverage = fieldToNumber(values, "observabilityCoverage");
-  const iacCoverage = fieldToNumber(values, "iacCoverage");
-
-  const incidentsPerMonth = fieldToNumber(values, "incidentsPerMonth");
-  const slaUptime = fieldToNumber(values, "slaUptime");
-  const autoRemediation = fieldToNumber(values, "autoRemediation");
-
-  const aiUsagePercent = fieldToNumber(values, "aiUsagePercent");
-  const aiAlertReduction = fieldToNumber(values, "aiAlertReduction");
-  const aiUsageFrequency = fieldToNumber(values, "aiUsageFrequency");
-
-  const buildTimeMinutes = fieldToNumber(values, "buildTimeMinutes");
-  const setupTimeMinutes = fieldToNumber(values, "setupTimeMinutes");
-  const deploymentFriction = fieldToNumber(values, "deploymentFriction");
-
-  const delivery = (
-    clamp((deploymentsPerDay / 20) * 100, 0, 100) +
-    clamp(100 - (leadTimeMinutes / 720) * 100, 0, 100) +
-    clamp(100 - changeFailureRate, 0, 100) +
-    clamp(100 - (mttrMinutes / 240) * 100, 0, 100)
-  ) / 4;
-
-  const cost = (
-    clamp(100 - (monthlyCloudCost / 50000) * 100, 0, 100) +
-    clamp(100 - idleResourcesPercent, 0, 100) +
-    clamp(100 - (costPerDeployment / 500) * 100, 0, 100)
-  ) / 3;
-
-  const architecture = (
-    clamp(autoscalingCoverage, 0, 100) +
-    clamp(multiAzCoverage, 0, 100) +
-    clamp(observabilityCoverage, 0, 100) +
-    clamp(iacCoverage, 0, 100)
-  ) / 4;
-
-  const reliability = (
-    clamp(100 - (incidentsPerMonth / 30) * 100, 0, 100) +
-    clamp(slaUptime, 0, 100) +
-    clamp(autoRemediation, 0, 100)
-  ) / 3;
-
-  const ai = (
-    clamp(aiUsagePercent, 0, 100) +
-    clamp(aiAlertReduction, 0, 100) +
-    clamp((aiUsageFrequency / 20) * 100, 0, 100)
-  ) / 3;
-
-  const devEx = (
-    clamp(100 - (buildTimeMinutes / 120) * 100, 0, 100) +
-    clamp(100 - (setupTimeMinutes / 240) * 100, 0, 100) +
-    clamp(100 - deploymentFriction * 10, 0, 100)
-  ) / 3;
-
-  return {
-    delivery: Number(delivery.toFixed(2)),
-    cost: Number(cost.toFixed(2)),
-    architecture: Number(architecture.toFixed(2)),
-    reliability: Number(reliability.toFixed(2)),
-    ai: Number(ai.toFixed(2)),
-    devEx: Number(devEx.toFixed(2)),
-  };
 }
 
 function MetricInput({
@@ -299,10 +216,12 @@ export function ScoreAssessmentForm() {
       return [];
     }
 
-    return Object.entries(result.breakdown).map(([metric, value]) => ({
-      metric: metricLabels[metric as ScoreMetricKey],
-      value: value.normalized,
-    }));
+    return Object.entries(result.breakdown)
+      .filter(([, value]) => value.normalized !== null)
+      .map(([metric, value]) => ({
+        metric: metricLabels[metric as ScoreMetricKey],
+        value: value.normalized as number,
+      }));
   }, [result]);
 
   const handleChange = (key: keyof FormValues, value: string) => {
@@ -334,7 +253,7 @@ export function ScoreAssessmentForm() {
     setLeadMessage("");
     trackEvent("score_started");
 
-    const payload = aggregatePayload(values);
+    const payload = values;
 
     try {
       const response = await fetch("/api/score", {
@@ -565,7 +484,7 @@ export function ScoreAssessmentForm() {
         {result && (
           <>
             <div className="space-y-6">
-              <ScoreGauge score={result.score} />
+              {result.score !== null && <ScoreGauge score={result.score} />}
             </div>
 
             <div className="space-y-3">
@@ -574,7 +493,7 @@ export function ScoreAssessmentForm() {
                 {Object.entries(result.breakdown).map(([metric, value]) => (
                   <div key={metric} className="rounded-xl border border-slate-700 bg-slate-800 p-4">
                     <p className="text-sm text-slate-300">{metricLabels[metric as ScoreMetricKey]}</p>
-                    <p className="text-lg font-semibold text-white">{value.normalized}</p>
+                    <p className="text-lg font-semibold text-white">{value.normalized ?? "—"}</p>
                   </div>
                 ))}
               </div>

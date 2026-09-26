@@ -11,7 +11,7 @@ interface StoredLead {
   id: string;
   email: string;
   resultId: string;
-  score: number;
+  score: number | null;
   inputs: ScoreInput;
   createdAt: string;
 }
